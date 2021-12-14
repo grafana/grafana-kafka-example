@@ -1,5 +1,5 @@
 # grafana-kafka-example
-Example integration of a Kafka Producer, Kafka Broker and Promtail producing test data to Grafana Cloud Logs
+Example integration of a Kafka Producer, Kafka Broker and Promtail producing test data to Grafana Cloud Logs, see [architecture](https://github.com/grafana/grafana-kafka-example/blob/main/architecture1.png)
 
 ## Configure the environment variables 
 
