@@ -1,0 +1,64 @@
+version: '2'
+services:
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:5.2.4
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    restart: always
+    ports:
+      - 22181:2181
+
+  kafka:
+    image: confluentinc/cp-kafka:5.2.4
+    depends_on:
+      - zookeeper
+    restart: always
+    ports:
+      - 29092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  promtail:
+    image: grafana/promtail:latest
+    depends_on:
+      - kafka
+    restart: always
+    volumes:
+      - type: bind
+        source: ./promtail-config.yml
+        target: /etc/promtail/promtail-config.yml
+      - /var/log:/var/logtest:ro
+    entrypoint:
+      - /usr/bin/promtail
+      - -config.file=/etc/promtail/promtail-config.yml
+    environment:
+      V1: 123
+      V2: 567
+
+  producer:
+    image: kafka_producer
+    depends_on:
+      - kafka
+    restart: always
+    volumes:
+      - type: bind
+        source: ./kafka_producer.py
+        target: /home/test/kafka_producer.py
+    entrypoint:
+      - python3
+      - /home/test/kafka_producer.py
+    environment:
+      KAFKA_BROKER: "kafka:9092"
+      KAFKA_TOPIC: "grafana"
+      KAFKA_PRODUCER_INTERVAL: 60
+
+networks:
+  kafka_network:
+    name: kafka_docker_example_net

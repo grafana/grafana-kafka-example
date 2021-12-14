@@ -1,0 +1,41 @@
+server:
+  http_listen_port: 9081
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/promtail-positions.yaml
+
+clients:
+  - url: __GRAFANA_LOGS_URL__
+    basic_auth:
+      username: __GRAFANA_LOGS_USERNAME__
+      password: __GRAFANA_LOGS_API_KEY__
+
+scrape_configs:
+- job_name: varlogs
+  static_configs:
+    - targets: [localhost]
+      labels:
+        job: varlogs
+        __path__: /var/logtest/system.log
+- job_name: kafka
+  kafka:
+    brokers:
+    - kafka:9092
+    topics:
+    - grafana
+    labels:
+      job: kafka
+  relabel_configs:
+      - action: replace
+        source_labels:
+          - __meta_kafka_topic
+        target_label: topic
+      - action: replace
+        source_labels:
+          - __meta_kafka_partition
+        target_label: partition
+      - action: replace
+        source_labels:
+          - __meta_kafka_group_id
+        target_label: group
