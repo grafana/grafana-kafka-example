@@ -29,6 +29,9 @@ This will start the containers: zookeeper, kafka, producer and promtail
 ## Validate logs are being sent to Grafana Cloud Logs
 
 Using the Logs Data Source and [LogQL](https://grafana.com/docs/loki/latest/logql/) Check for log messages under the labels: ```{job="kafka"}``` and ```{job="varlogs"}```
+
+Import the example dashboard ```dashboard-example-1.json``` into Grafana and configure the Logs Data Source
+
 ## Stop the containers
 ```
 ./ctl.sh down
