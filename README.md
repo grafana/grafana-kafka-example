@@ -1,11 +1,13 @@
 # grafana-kafka-example
 Example integration of a Kafka Producer, Kafka Broker and Promtail producing test data to Grafana Cloud Logs, see [architecture](https://github.com/grafana/grafana-kafka-example/blob/main/architecture1.png)
 
+Requires Docker and Docker Compose
+
 ## Configure the environment variables 
 
 Configure the environment variables below from your Grafana Cloud Account Logs Data Source settings, see [Create a Grafana Cloud API Key](https://grafana.com/docs/grafana-cloud/reference/create-api-key/)
 
-File: envvars-grafana-cloud-stack1.sh
+Edit the file: ```envvars-grafana-cloud-stack1.sh```
 
 ```
 export GRAFANA_LOGS_URL="https://logs-prod-us-central1.grafana.net/loki/api/v1/push"
@@ -14,6 +16,7 @@ export GRAFANA_LOGS_API_KEY="eyJrIjoi...."
 ```
 ## Configure Promtail
 ```
+source envvars-grafana-cloud-stack1.sh
 ./ctl.sh configure
 ```
 Check the file ```promtail-config.yml``` now has the correct _LOGS_ credentials
