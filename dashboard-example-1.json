@@ -20,14 +20,17 @@
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "gnetId": null,
   "graphTooltip": 0,
-  "id": 17,
+  "id": 28,
+  "iteration": 1641348339059,
   "links": [],
   "liveNow": false,
   "panels": [
     {
-      "datasource": "grafanacloud-ddr1-logs",
+      "datasource": {
+        "type": "loki",
+        "uid": "${logsDataSource}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -84,9 +87,13 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.7",
+      "pluginVersion": "8.3.3",
       "targets": [
         {
+          "datasource": {
+            "type": "loki",
+            "uid": "${logsDataSource}"
+          },
           "expr": "sum by (processName) (sum_over_time( {job=\"kafka\"} | json | unwrap count [$__interval] ))",
           "legendFormat": "{{processName}}",
           "refId": "A"
@@ -96,7 +103,10 @@
       "type": "stat"
     },
     {
-      "datasource": "grafanacloud-ddr1-logs",
+      "datasource": {
+        "type": "loki",
+        "uid": "${logsDataSource}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -139,9 +149,13 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "8.2.7",
+      "pluginVersion": "8.3.3",
       "targets": [
         {
+          "datasource": {
+            "type": "loki",
+            "uid": "${logsDataSource}"
+          },
           "expr": "sum by (status) (rate( {job=\"kafka\"} | json [1h] ) * 3600 )",
           "legendFormat": "{{status}}",
           "refId": "A"
@@ -151,7 +165,10 @@
       "type": "bargauge"
     },
     {
-      "datasource": "grafanacloud-ddr1-logs",
+      "datasource": {
+        "type": "loki",
+        "uid": "${logsDataSource}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -222,6 +239,10 @@
       },
       "targets": [
         {
+          "datasource": {
+            "type": "loki",
+            "uid": "${logsDataSource}"
+          },
           "expr": "sum by (statusCode) (count_over_time( {job=\"kafka\"} | json [$__interval] ))",
           "legendFormat": "{{statusCode}}",
           "refId": "A"
@@ -231,11 +252,31 @@
       "type": "timeseries"
     }
   ],
-  "schemaVersion": 32,
+  "schemaVersion": 34,
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "grafanacloud-ddr1-logs",
+          "value": "grafanacloud-ddr1-logs"
+        },
+        "hide": 1,
+        "includeAll": true,
+        "label": "Logs Data Source",
+        "multi": true,
+        "name": "logsDataSource",
+        "options": [],
+        "query": "loki",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      }
+    ]
   },
   "time": {
     "from": "now-1h",
@@ -243,7 +284,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Kafka-Example-1",
-  "uid": "TQuawC2nz",
-  "version": 7
+  "title": "Kafka-Example-2",
+  "uid": "TQuawC2nw",
+  "version": 3,
+  "weekStart": ""
 }
