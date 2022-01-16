@@ -6,10 +6,10 @@ positions:
   filename: /tmp/promtail-positions.yaml
 
 clients:
-  - url: __GRAFANA_LOGS_URL__
+  - url: ${GRAFANA_LOGS_WRITE_URL}
     basic_auth:
-      username: __GRAFANA_LOGS_USERNAME__
-      password: __GRAFANA_LOGS_API_KEY__
+      username: ${GRAFANA_LOGS_USERNAME}
+      password: ${GRAFANA_LOGS_API_KEY}
 
 scrape_configs:
 - job_name: varlogs
@@ -26,6 +26,7 @@ scrape_configs:
     - grafana
     labels:
       job: kafka
+      host: ${HOSTNAME:promtail}
   relabel_configs:
       - action: replace
         source_labels:
