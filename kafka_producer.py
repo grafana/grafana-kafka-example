@@ -6,11 +6,14 @@ import random
 import sys
 import json
 from confluent_kafka import Producer
+from confluent_kafka.admin import AdminClient, NewTopic, NewPartitions
+
 
 config = { "count":    int(os.environ.get("KAFKA_PRODUCER_COUNT", 604800)),
            "interval": int( os.environ.get("KAFKA_PRODUCER_INTERVAL", 60)),
            "broker":   os.environ.get("KAFKA_BROKER", "kafka:9092"),
            "topic":    os.environ.get("KAFKA_TOPIC", "grafana"),
+           "partitions": os.environ.get("KAFKA_PARTITIONS", 4),
  }
 
 dataWords = {
@@ -33,12 +36,14 @@ dataWords2 = {
                   { "latitude": 39.043700, "longitude": -77.487500, "city": "Ashburn", "city_geoname_id": 4744870, "geoip_country_code": "US"    } ]
 }
 
-def createLogLine():
+def createLogLine(id=0, partition=0):
     logLine = {
         "status": random.choice(dataWords["status"]),
         "statusCode": random.choice(dataWords["statusCode"]),
         "processName": random.choice(dataWords["processName"]),
-        "count": random.randint(1,100)
+        "count": random.randint(1,100),
+        "id": id,
+        "partition": partition
     }
     if "location" in dataWords.keys():
         loc = random.choice(dataWords["location"])
@@ -56,14 +61,36 @@ def deliveryCallback(err, msg):
                           msg.topic(), msg.partition(), msg.offset()))
 
 kafkaConfig = {'bootstrap.servers': config["broker"]}
+
+try:
+    # Create topics
+    ac = AdminClient(kafkaConfig)
+    print( "Topics: ", ac.list_topics( ) )
+    topicList = []
+    topicList.append( NewTopic(topic="grafana", num_partitions=config["partitions"], replication_factor=1) )
+    ac.create_topics(topicList )
+except Exception as e:
+    pritn( "Create topics {}".format(e))
+
+
+#np = NewPartitions(topic="grafana", new_total_count=2)
+#ac.create_partitions(np)
+
 p1 = Producer(**kafkaConfig)
 print( "Producer: ", kafkaConfig, config["broker"], config["topic"])
 
+partitionN = 0
 for i in range(0, config["count"]):
-    logMsg = json.dumps(createLogLine())
-    print( "{}: {}".format(i, logMsg) )
+    #partition = random.randrange(0, config["partitions"])
+    partition = partitionN
+    partitionN = (partitionN + 1) % config["partitions"]
+    logMsg = json.dumps(createLogLine(id=i, partition=partition))
+    print( "{}: {} {}".format(i, logMsg, partition) )
     try:
-        p1.produce(config["topic"], logMsg, callback=deliveryCallback)
+        p1.produce(topic=config["topic"],
+            value=logMsg,
+            partition=partition,
+            callback=deliveryCallback)
     except BufferError:
         sys.stderr.write("Kafka_producer: Queue Full: Topic: {} Messages: {}\n".format(config["topic"], len(p1)))
     p1.poll(0)
