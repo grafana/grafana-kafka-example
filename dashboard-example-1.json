@@ -2,11 +2,18 @@
   "__inputs": [
     {
       "name": "DS_GRAFANACLOUD-DDR1-LOGS",
-      "label": "Logs Data Source",
+      "label": "grafanacloud-ddr1-logs",
       "description": "",
       "type": "datasource",
       "pluginId": "loki",
       "pluginName": "Loki"
+    },
+    {
+      "name": "VAR_LOGSDATASOURCE",
+      "type": "constant",
+      "label": "Logs Data Source",
+      "value": "grafanacloud-ddr1-logs",
+      "description": ""
     }
   ],
   "__elements": [],
@@ -15,6 +22,12 @@
       "type": "panel",
       "id": "bargauge",
       "name": "Bar gauge",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "geomap",
+      "name": "Geomap",
       "version": ""
     },
     {
@@ -71,10 +84,173 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1641401964603,
+  "iteration": 1642458017074,
   "links": [],
   "liveNow": false,
   "panels": [
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "dark-blue",
+                "value": 2
+              },
+              {
+                "color": "dark-yellow",
+                "value": 3
+              },
+              {
+                "color": "#EF843C",
+                "value": 4
+              },
+              {
+                "color": "#1F78C1",
+                "value": 5
+              },
+              {
+                "color": "#E24D42",
+                "value": 6.0002
+              },
+              {
+                "color": "red",
+                "value": 7
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 13,
+      "options": {
+        "basemap": {
+          "config": {
+            "server": "streets"
+          },
+          "name": "Layer 0",
+          "type": "esri-xyz"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "showLegend": true,
+              "style": {
+                "color": {
+                  "field": "count_field",
+                  "fixed": "dark-green"
+                },
+                "opacity": 0.4,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "field": "count_field",
+                  "fixed": 5,
+                  "max": 10,
+                  "min": 2
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "text": {
+                  "field": "Last *",
+                  "fixed": "",
+                  "mode": "fixed"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "location": {
+              "gazetteer": "public/gazetteer/usa-states.json",
+              "lookup": "state_field",
+              "mode": "lookup"
+            },
+            "name": "Layer 1",
+            "type": "markers"
+          }
+        ],
+        "view": {
+          "id": "north-america",
+          "lat": 40,
+          "lon": -100,
+          "zoom": 3.5
+        }
+      },
+      "pluginVersion": "8.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
+          },
+          "expr": "sum by (state) (count_over_time( {job=\"kafka\",topic=\"grafana\"} | json | state!=\"\" | __error__=\"\" [$__interval] ))",
+          "legendFormat": "{{state}}",
+          "refId": "A"
+        }
+      ],
+      "title": "GeoMap",
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "labelsToFields": false,
+            "reducers": [
+              "lastNotNull"
+            ]
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Field": "state_field",
+              "Last": "count_field",
+              "Last *": "count_field"
+            }
+          }
+        }
+      ],
+      "type": "geomap"
+    },
     {
       "datasource": {
         "type": "loki",
@@ -115,9 +291,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 24,
-        "x": 0,
+        "h": 8,
+        "w": 12,
+        "x": 12,
         "y": 0
       },
       "id": 6,
@@ -182,7 +358,7 @@
         "h": 6,
         "w": 12,
         "x": 0,
-        "y": 4
+        "y": 8
       },
       "id": 2,
       "options": {
@@ -272,7 +448,7 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 4
+        "y": 8
       },
       "id": 4,
       "interval": "5m",
@@ -309,7 +485,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 10
+        "y": 14
       },
       "id": 9,
       "interval": "5m",
@@ -334,8 +510,71 @@
           "refId": "A"
         }
       ],
-      "title": "Status Codes",
+      "title": "Log Lines",
       "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 21
+      },
+      "id": 15,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true
+      },
+      "pluginVersion": "8.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
+          },
+          "expr": "topk( 10, sum by (state) (count_over_time( {job=\"kafka\",topic=\"grafana\"} | json | state!=\"\" | __error__=\"\" [$__interval] )) ) by (state)",
+          "instant": false,
+          "legendFormat": "{{state}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Panel Title",
+      "type": "bargauge"
     }
   ],
   "schemaVersion": 34,
@@ -372,8 +611,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Kafka-Logs-Example-1",
+  "title": "Kafka-Example-1",
   "uid": "TQuawC2n1",
-  "version": 1,
+  "version": 24,
   "weekStart": ""
 }
