@@ -14,7 +14,7 @@ messageId = 0
 
 config = { "count": int(os.environ.get("KAFKA_PRODUCER_COUNT", 604800)),
            "interval": int(os.environ.get("KAFKA_PRODUCER_INTERVAL", 60)),
-           "broker": os.environ.get("KAFKA_BROKER", "kafka:9092"),
+           "broker": os.environ.get("KAFKA_BROKER", "kafka_broker:9092"),
            "topic": os.environ.get("KAFKA_TOPIC", "grafana"),
            "partitions": int(os.environ.get("KAFKA_PARTITIONS", 4)),
            "dataDirListOfStates": os.environ.get("KAFKA_DATA_DIR_STATES", "kafka/worldmap-panel/src/data/states.json"),

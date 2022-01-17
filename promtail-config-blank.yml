@@ -21,7 +21,7 @@ scrape_configs:
 - job_name: kafka
   kafka:
     brokers:
-    - kafka:9092
+    - kafka_broker:9092
     topics:
     - grafana
     labels:
