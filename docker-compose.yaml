@@ -25,11 +25,14 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
+
   promtail:
     image: grafana/promtail:latest
     depends_on:
       - kafka
     restart: always
+    deploy:
+      replicas: 2
     volumes:
       - type: bind
         source: ./promtail-config.yml
@@ -37,6 +40,7 @@ services:
       - /var/log:/var/logtest:ro
     entrypoint:
       - /usr/bin/promtail
+      - -config.expand-env=true
       - -config.file=/etc/promtail/promtail-config.yml
     environment:
       V1: 123
@@ -49,15 +53,37 @@ services:
     restart: always
     volumes:
       - type: bind
+        source: ./kafka
+        target: /home/test/kafka
+      - type: bind
         source: ./kafka_producer.py
-        target: /home/test/kafka_producer.py
+        target: /home/test/kafka/kafka_producer.py
     entrypoint:
       - python3
-      - /home/test/kafka_producer.py
+      - /home/test/kafka/producer.py
+      - producerThreaded
     environment:
       KAFKA_BROKER: "kafka:9092"
       KAFKA_TOPIC: "grafana"
-      KAFKA_PRODUCER_INTERVAL: 60
+      KAFKA_PRODUCER_INTERVAL: 15
+
+  configurator:
+    image: kafka_producer
+    depends_on:
+      - kafka
+    volumes:
+      - type: bind
+        source: ./kafka
+        target: /home/test/kafka
+    entrypoint:
+      - python3
+      - /home/test/kafka/producer.py
+      - createTopics
+      - "300"
+    environment:
+      KAFKA_BROKER: "kafka:9092"
+      KAFKA_TOPIC: "grafana"
+      KAFKA_PRODUCER_INTERVAL: 15
 
 networks:
   kafka_network:

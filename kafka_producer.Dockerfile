@@ -10,6 +10,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR ${HOME_DIR}
 
-COPY kafka_producer.py $HOME_DIR/
+#COPY kafka/ $HOME_DIR/kafka
 
 CMD /bin/bash
