@@ -1,6 +1,7 @@
 version: '2'
 services:
 
+# zookeeper stores metadata or the kafka cluster nodes
   zookeeper:
     image: confluentinc/cp-zookeeper:5.2.4
     environment:
@@ -10,6 +11,7 @@ services:
     ports:
       - 22181:2181
 
+# kafka_broker provides: topics, partitions for producers and consumers
   kafka_broker:
     image: confluentinc/cp-kafka:5.2.4
     depends_on:
@@ -25,7 +27,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-
+# promtail consumes messages from a kafka topic and remote writes them to Grafana Logs
   promtail:
     image: grafana/promtail:latest
     depends_on:
@@ -46,6 +48,7 @@ services:
       V1: 123
       V2: 567
 
+# kafka_producer produces messages to a kafka topic
   producer:
     image: kafka_producer
     depends_on:
@@ -67,6 +70,7 @@ services:
       KAFKA_TOPIC: "grafana"
       KAFKA_PRODUCER_INTERVAL: 15
 
+# configurators creates the kafka topic
   configurator:
     image: kafka_producer
     depends_on:
