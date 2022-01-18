@@ -84,7 +84,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1642458017074,
+  "iteration": 1642533880361,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -96,14 +96,14 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "continuous-RdYlGr"
           },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "dark-purple",
                 "value": null
               },
               {
@@ -111,20 +111,20 @@
                 "value": 2
               },
               {
-                "color": "dark-yellow",
+                "color": "dark-green",
                 "value": 3
               },
               {
-                "color": "#EF843C",
+                "color": "dark-yellow",
                 "value": 4
               },
               {
-                "color": "#1F78C1",
+                "color": "dark-orange",
                 "value": 5
               },
               {
-                "color": "#E24D42",
-                "value": 6.0002
+                "color": "dark-red",
+                "value": 6
               },
               {
                 "color": "red",
@@ -163,10 +163,10 @@
               "showLegend": true,
               "style": {
                 "color": {
-                  "field": "count_field",
+                  "field": "count",
                   "fixed": "dark-green"
                 },
-                "opacity": 0.4,
+                "opacity": 0.2,
                 "rotation": {
                   "fixed": 0,
                   "max": 360,
@@ -174,7 +174,7 @@
                   "mode": "mod"
                 },
                 "size": {
-                  "field": "count_field",
+                  "field": "count",
                   "fixed": 5,
                   "max": 10,
                   "min": 2
@@ -199,7 +199,7 @@
             },
             "location": {
               "gazetteer": "public/gazetteer/usa-states.json",
-              "lookup": "state_field",
+              "lookup": "state",
               "mode": "lookup"
             },
             "name": "Layer 1",
@@ -220,7 +220,7 @@
             "type": "loki",
             "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
           },
-          "expr": "sum by (state) (count_over_time( {job=\"kafka\",topic=\"grafana\"} | json | state!=\"\" | __error__=\"\" [$__interval] ))",
+          "expr": "sum by (state) (count_over_time( {job=\"kafka\",topic=\"grafana\"} | json | state!=\"\" | __error__=\"\" [5m]) )",
           "legendFormat": "{{state}}",
           "refId": "A"
         }
@@ -242,14 +242,140 @@
             "excludeByName": {},
             "indexByName": {},
             "renameByName": {
-              "Field": "state_field",
+              "Field": "state",
               "Last": "count_field",
-              "Last *": "count_field"
+              "Last *": "count"
             }
           }
         }
       ],
       "type": "geomap"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 15,
+      "maxDataPoints": 1,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true
+      },
+      "pluginVersion": "8.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
+          },
+          "expr": "topk( 4, sum by (state) (count_over_time( {job=\"kafka\",topic=\"grafana\"} | json | state!=\"\" | __error__=\"\" [15m]) ) )",
+          "instant": false,
+          "legendFormat": "{{state}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Top Activity by State",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
+      "id": 2,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "text": {}
+      },
+      "pluginVersion": "8.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
+          },
+          "expr": "sum by (status) (rate( {job=\"kafka\"} | json [1h] ) * 3600 )",
+          "legendFormat": "{{status}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Job Status",
+      "type": "bargauge"
     },
     {
       "datasource": {
@@ -291,10 +417,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 0
+        "h": 7,
+        "w": 7,
+        "x": 8,
+        "y": 8
       },
       "id": 6,
       "options": {
@@ -326,68 +452,6 @@
       ],
       "title": "Process Events",
       "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 0,
-        "y": 8
-      },
-      "id": 2,
-      "options": {
-        "displayMode": "gradient",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "text": {}
-      },
-      "pluginVersion": "8.3.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
-          },
-          "expr": "sum by (status) (rate( {job=\"kafka\"} | json [1h] ) * 3600 )",
-          "legendFormat": "{{status}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Job Status",
-      "type": "bargauge"
     },
     {
       "datasource": {
@@ -445,9 +509,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 12,
+        "h": 7,
+        "w": 8,
+        "x": 15,
         "y": 8
       },
       "id": 4,
@@ -485,7 +549,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 15
       },
       "id": 9,
       "interval": "5m",
@@ -505,76 +569,13 @@
             "type": "loki",
             "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
           },
-          "expr": "{topic=\"grafana\"}",
+          "expr": "{job=\"kafka\", topic=\"grafana\"} | json | line_format \"{{indent 0 .state}}\\t{{indent 0 .host}}\\t{{.status}}\\t{{.statusCode}}\"",
           "legendFormat": "{{statusCode}}",
           "refId": "A"
         }
       ],
       "title": "Log Lines",
       "type": "logs"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 21
-      },
-      "id": 15,
-      "options": {
-        "displayMode": "gradient",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true
-      },
-      "pluginVersion": "8.3.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
-          },
-          "expr": "topk( 10, sum by (state) (count_over_time( {job=\"kafka\",topic=\"grafana\"} | json | state!=\"\" | __error__=\"\" [$__interval] )) ) by (state)",
-          "instant": false,
-          "legendFormat": "{{state}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Panel Title",
-      "type": "bargauge"
     }
   ],
   "schemaVersion": 34,
@@ -613,6 +614,6 @@
   "timezone": "",
   "title": "Kafka-Example-1",
   "uid": "TQuawC2n1",
-  "version": 24,
+  "version": 33,
   "weekStart": ""
 }
