@@ -21,16 +21,6 @@ config = { "count": int(os.environ.get("KAFKA_PRODUCER_COUNT", 604800)),
            "startDelaySec": 30
  }
 
-kafkaConfig = {"bootstrap.servers": config["broker"]}
-
-def createSyntheticData():
-    return {
-        "status": [ "running", "pending", "succeded", "unknown" ],
-        "statusCode": [ 100, 200, 300, 400, 500, 600 ],
-        "processName": [ "ingester", "querier", "compactor", "distributor", "memcache", "gateway", "frontend" ],
-        "processName": [ "p1", "p2", "p3", "p4", "p5" ],
-        "location": { "states": listOfStates } }
-
 def readJsonFile(fileName):
     j = []
     try:
@@ -39,13 +29,29 @@ def readJsonFile(fileName):
         sys.stderr.write("readJsonFile: failed: file: {} {}\n".format(fileName, e))
     return j
 
+def createSyntheticData(listOfStates):
+    listOfStateWeights = [ int(1) for i in range(0,len(listOfStates)) ] # Neutral
+    stateNameList = [ i["name"] for i in listOfStates ]
+    listOfStateWeights[ stateNameList.index("California") ] = 9
+    listOfStateWeights[ stateNameList.index("New York") ] = 9
+    listOfStateWeights[ stateNameList.index("Washington") ] = 9
+    listOfStateWeights[ stateNameList.index("Colorado") ] = 9
+    listOfStateWeights[ stateNameList.index("Georgia") ] = 9
+    return {
+        "status": [ "running", "pending", "succeded", "unknown" ],
+        "statusCode": [ 100, 200, 300, 400, 500, 600 ],
+        "processName": [ "ingester", "querier", "compactor", "distributor", "memcache", "gateway", "frontend" ],
+        "processName": [ "p1", "p2", "p3", "p4", "p5" ],
+        "location": { "states": listOfStates, "weights": listOfStateWeights } }
+
 def createLogLine(id=0, partition=0):
     return {
         "status": random.choice(dataWords["status"]),
         "statusCode": random.choice(dataWords["statusCode"]),
         "processName": random.choice(dataWords["processName"]),
         "count": random.randint(1,100),
-        "state": random.choice(dataWords["location"]["states"])["name"],
+        "state": random.choices(population=dataWords["location"]["states"],
+                                weights=dataWords["location"]["weights"])[0]["name"],
         "id": id,
         "partition": partition,
     }
@@ -184,23 +190,19 @@ def producerThreaded():
     while (True):
         partitions = getPartitions() #partitions = { i: i for i in range(0,4) }
         if len(partitions) > 0:
-            s.enter(delay=15, priority=1, action=scheduleProducer, argument=(kp, partitions, id,))
+            s.enter(delay=config["interval"], priority=1, action=scheduleProducer, argument=(kp, partitions, id,))
             s.run(blocking=True)
             id += len(partitions)
         else:
             sys.stderr.write("producerThreaded: No Partitions {}: Exiting\n".format(len(partitions)))
-            time.sleep(15)
+            time.sleep(5)
             break
 
-cmd = sys.argv[1] if len(sys.argv) > 1 else "unknown command"
-if cmd == "readStates":
-    print(config)
-    listOfStates = readJsonFile(config["dataDirListOfStates"])
-    print(listOfStates)
-    dataWords = createSyntheticData()
-    sys.stderr.write("Synthetic {}".format(dataWords))
+# Configuration
+kafkaConfig = {"bootstrap.servers": config["broker"]}
 
-elif cmd == "createTopics":
+cmd = sys.argv[1] if len(sys.argv) > 1 else "unknown command"
+if cmd == "createTopics":
     timeoutSec = int(sys.argv[2]) if len(sys.argv) > 2 else 300
     timeoutTime = datetime.now() + timedelta(seconds=timeoutSec)
     while datetime.now() < timeoutTime:
@@ -209,27 +211,29 @@ elif cmd == "createTopics":
         time.sleep(15)
     sys.stderr.write("createTopics: Ending {}\n".format(timeoutSec))
 
+elif cmd == "producerThreaded":
+    dataWords = createSyntheticData(listOfStates=readJsonFile(config["dataDirListOfStates"]))
+    producerThreaded()
+
 elif cmd == "producerSerial":
     sys.stderr.write("Producer waiting to start: delay: {}\n".format(config["startDelaySec"]))
     #time.sleep(config["startDelaySec"]) # delay start up
-    listOfStates = readJsonFile(config["dataDirListOfStates"])
-    dataWords = createSyntheticData()
+    dataWords = createSyntheticData(listOfStates=readJsonFile(config["dataDirListOfStates"]))
     createKafkaTopics()
     validateTopicPartitions()
     listTopics()
     producerSerial()
 
-elif cmd == "producerThreaded":
+elif cmd == "testReadStates":
     listOfStates = readJsonFile(config["dataDirListOfStates"])
-    dataWords = createSyntheticData()
-    #createKafkaTopics()
-    #validateTopicPartitions()
-    producerThreaded()
+    dataWords = createSyntheticData(listOfStates)
+    sys.stderr.write("Synthetic {}".format(dataWords))
+    sys.stderr.write("Log Line {}".format(createLogLine(id=0, partition=0)))
 
 elif cmd == "testProducer":
     listOfStates = readJsonFile(config["dataDirListOfStates"])
-    dataWords = createSyntheticData()
-    print( createLogLine(id=0, partition=0) )
+    dataWords = createSyntheticData(listOfStates)
+    print(createLogLine(id=0, partition=0) )
     producerThreaded()
 
 else:
