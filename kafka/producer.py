@@ -164,7 +164,7 @@ def producerSerial():
 
 def producerSingle(kp, partitionN, id):
     logMsg = json.dumps(createLogLine(id=id, partition=partitionN))
-    sys.stderr.write("Producing: id: {}: msg: {} partition: {}\n".format(id, logMsg, partitionN))
+    sys.stderr.write("Producing: id: {} msg: {} msgSize: {} partition: {}\n".format(id, logMsg, len(logMsg), partitionN))
     try:
         kp.produce(topic=config["topic"], value=logMsg, partition=partitionN, callback=deliveryCallback)
     except BufferError: # Otherwise fail
