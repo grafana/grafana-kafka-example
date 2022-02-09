@@ -26,6 +26,12 @@
     },
     {
       "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
+      "type": "panel",
       "id": "geomap",
       "name": "Geomap",
       "version": ""
@@ -34,7 +40,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.3.3"
+      "version": "8.3.5"
     },
     {
       "type": "panel",
@@ -84,7 +90,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1642533880361,
+  "iteration": 1644367962672,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -136,7 +142,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 7,
         "w": 12,
         "x": 0,
         "y": 0
@@ -213,7 +219,7 @@
           "zoom": 3.5
         }
       },
-      "pluginVersion": "8.3.3",
+      "pluginVersion": "8.3.5",
       "targets": [
         {
           "datasource": {
@@ -271,7 +277,7 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 20
               }
             ]
           }
@@ -279,8 +285,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 7,
+        "w": 11,
         "x": 12,
         "y": 0
       },
@@ -298,7 +304,7 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "8.3.3",
+      "pluginVersion": "8.3.5",
       "targets": [
         {
           "datasource": {
@@ -343,10 +349,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 5,
         "w": 8,
         "x": 0,
-        "y": 8
+        "y": 7
       },
       "id": 2,
       "options": {
@@ -362,7 +368,7 @@
         "showUnfilled": true,
         "text": {}
       },
-      "pluginVersion": "8.3.3",
+      "pluginVersion": "8.3.5",
       "targets": [
         {
           "datasource": {
@@ -417,10 +423,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 5,
         "w": 7,
         "x": 8,
-        "y": 8
+        "y": 7
       },
       "id": 6,
       "options": {
@@ -438,7 +444,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.3.3",
+      "pluginVersion": "8.3.5",
       "targets": [
         {
           "datasource": {
@@ -509,10 +515,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 5,
         "w": 8,
         "x": 15,
-        "y": 8
+        "y": 7
       },
       "id": 4,
       "interval": "5m",
@@ -546,10 +552,10 @@
         "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
       },
       "gridPos": {
-        "h": 7,
-        "w": 24,
+        "h": 9,
+        "w": 11,
         "x": 0,
-        "y": 15
+        "y": 12
       },
       "id": 9,
       "interval": "5m",
@@ -559,7 +565,7 @@
         "prettifyLogMessage": false,
         "showCommonLabels": false,
         "showLabels": false,
-        "showTime": false,
+        "showTime": true,
         "sortOrder": "Descending",
         "wrapLogMessage": false
       },
@@ -576,8 +582,231 @@
       ],
       "title": "Log Lines",
       "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Messages Bytes Per Minute"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 11,
+        "y": 12
+      },
+      "id": 17,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
+          },
+          "expr": "sum by (job) (rate( {job=\"kafka\"} [5m] ) * 60 )",
+          "legendFormat": "Messages Per Minute",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
+          },
+          "expr": "sum by (job) (bytes_rate( {job=\"kafka\"} [5m] ) * 60 )",
+          "hide": false,
+          "legendFormat": "Messages Bytes Per Minute",
+          "refId": "B"
+        }
+      ],
+      "title": "Log Messages",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total Message Bytes"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 17,
+        "y": 12
+      },
+      "id": 18,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.3.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
+          },
+          "expr": "sum by (job) (rate( {job=\"kafka\"} [5m] ) * 60 )",
+          "hide": false,
+          "legendFormat": "Messages Per Minute",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
+          },
+          "expr": "sum by (job) (bytes_rate( {job=\"kafka\"} [5m] ) * 60 )",
+          "hide": false,
+          "legendFormat": "Messages Bytes Per Minute",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
+          },
+          "expr": "sum by (job) (bytes_over_time( {job=\"kafka\"} [$__range] ))",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Total Message Bytes",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_GRAFANACLOUD-DDR1-LOGS}"
+          },
+          "expr": "( sum by (job) (bytes_rate( {job=\"kafka\"} [5m] ) * 60 ) ) / ( sum by (job) (rate( {job=\"kafka\"} [5m] ) * 60 ) )",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Message Size (AVG)",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Log Messages",
+      "type": "gauge"
     }
   ],
+  "refresh": "",
   "schemaVersion": 34,
   "style": "dark",
   "tags": [],
@@ -607,13 +836,13 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Kafka-Example-1",
   "uid": "TQuawC2n1",
-  "version": 33,
+  "version": 40,
   "weekStart": ""
 }
