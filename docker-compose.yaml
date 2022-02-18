@@ -59,8 +59,8 @@ services:
         source: ./kafka
         target: /home/test/kafka
       - type: bind
-        source: ./kafka_producer.py
-        target: /home/test/kafka/kafka_producer.py
+        source: ./kafka/producer.py
+        target: /home/test/kafka/producer.py
     entrypoint:
       - python3
       - /home/test/kafka/producer.py
