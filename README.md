@@ -5,7 +5,11 @@ Requires Docker and Docker Compose
 
 ## Configure the environment variables
 
-Configure the environment variables below from your Grafana Cloud Account Logs Data Source settings, see [Create a Grafana Cloud API Key](https://grafana.com/docs/grafana-cloud/reference/create-api-key/)
+Configure the environment variables below from your Grafana Cloud Account Logs Data Source settings:
+
+1. Log into your [Grafana Cloud account](https://grafana.com/auth/sign-in) to access the Cloud Portal
+2. Select the **Loki Send Logs** to set up and manage the Loki logging service from the [Cloud Portal](https://grafana.com/docs/grafana-cloud/fundamentals/cloud-portal/)
+3. From the **Grafana Data Source setting for Logs**, use the hostname of the **URL**, the **User** and **Password** in the following environment variables:
 
 Edit the file: ```envvars-grafana-cloud-stack1.sh```
 
