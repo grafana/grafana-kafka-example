@@ -3,14 +3,14 @@ Example integration of a Kafka Producer, Kafka Broker and Promtail producing tes
 
 Requires Docker and Docker Compose
 
-## Configure the environment variables 
+## Configure the environment variables
 
 Configure the environment variables below from your Grafana Cloud Account Logs Data Source settings, see [Create a Grafana Cloud API Key](https://grafana.com/docs/grafana-cloud/reference/create-api-key/)
 
 Edit the file: ```envvars-grafana-cloud-stack1.sh```
 
 ```
-export GRAFANA_LOGS_URL="https://logs-prod-us-central1.grafana.net/loki/api/v1/push"
+export GRAFANA_LOGS_HOST="logs-prod-us-central1.grafana.net"
 export GRAFANA_LOGS_USERNAME="123456"
 export GRAFANA_LOGS_API_KEY="eyJrIjoi...."
 ```
@@ -39,4 +39,3 @@ Import the example dashboard ```dashboard-example-1.json``` into Grafana and con
 ```
 ./ctl.sh down
 ```
-
