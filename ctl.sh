@@ -31,12 +31,11 @@ case "$1" in
     docker run -i -t kafka_producer
   ;;
   up)
-    docker-compose -f docker-compose.yaml up
+    docker-compose -f docker-compose.yaml up --detach
   ;;
   down)
     docker-compose -f docker-compose.yaml down
   ;;
-
   start)
     echo "start"
     ;;
