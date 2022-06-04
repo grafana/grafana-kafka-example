@@ -94,8 +94,11 @@ def createKafkaTopics():
         ac = AdminClient(kafkaConfig)
         sys.stderr.write("Create Topics: Connected\n")
         #sys.stderr.write("Topics: {}\n".format(ac.list_topics()))
+        # https://docs.confluent.io/5.2.1/clients/confluent-kafka-python/index.html?highlight=newtopic#confluent_kafka.admin.NewTopic
+        # https://kafka.apache.org/documentation.html#topicconfigs
         topicList = []
-        topicList.append(NewTopic(topic=topic, num_partitions=numPartitions, replication_factor=1))
+        configOptions = {}
+        topicList.append(NewTopic(topic=topic, num_partitions=numPartitions, replication_factor=1, config=configOptions))
         sys.stderr.write("Create Topics: Creating\n")
         ac.create_topics(new_topics=topicList, validate_only=False, request_timeout=60, operation_timeout=30)
         sys.stderr.write("Created Topics: {} Partitions: {} kconfig {}\n".format(topic, numPartitions, kafkaConfig))
@@ -199,7 +202,7 @@ def producerThreaded():
             break
 
 # Configuration
-kafkaConfig = {"bootstrap.servers": config["broker"]}
+kafkaConfig = {"bootstrap.servers": config["broker"], "compression.type": "snappy"}
 
 cmd = sys.argv[1] if len(sys.argv) > 1 else "unknown command"
 if cmd == "createTopics":
